@@ -1,0 +1,15 @@
+fastapi>=0.110
+uvicorn[standard]>=0.29
+python-multipart>=0.0.9
+pillow>=10.0
+numpy>=1.24
+opencv-python>=4.8
+rapidocr-onnxruntime>=1.3.24
+reportlab>=4.0
+openpyxl>=3.1
+scikit-learn>=1.4
+pytesseract>=0.3.10
+scikit-learn>=1.5
+joblib>=1.4
+# PaddleOCR remains optional in the current METRIYA backend.
+# Install it only if your existing multi-OCR configuration requires it.

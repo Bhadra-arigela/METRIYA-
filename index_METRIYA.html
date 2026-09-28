@@ -1,0 +1,1323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+  <title>METRIYA</title>
+
+  <!-- Mobile PWA Manifest & iOS Support -->
+<meta name="theme-color" content="#0f2942" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="METRIYA" />
+  <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" />
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Lucide Icons CDN -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <!-- Chart.js CDN for Enforcement Trends -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <!-- Custom Stylesheet -->
+  
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            navy: {
+              800: '#0f2942',
+              900: '#071727'
+            },
+            metrology: {
+              primary: '#0f2942',
+              secondary: '#0284c7',
+              light: '#f0f9ff',
+              compliant: '#16a34a',
+              noncompliant: '#dc2626',
+              warning: '#d97706'
+            }
+          }
+        }
+      }
+    };
+  </script>
+
+<style id="lmcc-file-open-fallback-styles">
+  .dropzone {
+    border: 2px dashed #94a3b8;
+    background: #f8fafc;
+    transition: all .2s ease;
+  }
+  .dropzone:hover {
+    border-color: #0284c7;
+    background: #f0f9ff;
+  }
+  .page-view {
+    width: 100%;
+  }
+  .no-print {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+</style>
+
+</head>
+<body class="bg-slate-50 text-slate-900 min-h-screen flex flex-col font-sans select-none">
+
+  <!-- =========================================================
+       GLOBAL APP NAVIGATION HEADER (Shown on Page 3 to 14)
+       ========================================================= -->
+  <header id="main-header" class="no-print hidden sticky top-0 z-40 bg-navy-800 text-white shadow-md">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      
+      <!-- Left: Hamburger Menu & Back Button & App Title -->
+      <div class="flex items-center space-x-3">
+        <button id="btn-toggle-drawer" class="p-2 rounded-lg hover:bg-navy-900 focus:outline-none focus:ring-2 focus:ring-sky-400" aria-label="Open Navigation Menu">
+          <i data-lucide="menu" class="w-6 h-6"></i>
+        </button>
+        
+        <button id="btn-global-back" class="hidden p-2 rounded-lg hover:bg-navy-900 focus:outline-none focus:ring-2 focus:ring-sky-400 text-sky-300 flex items-center gap-1 text-sm font-semibold" aria-label="Go Back">
+          <i data-lucide="arrow-left" class="w-5 h-5"></i>
+          <span class="hidden sm:inline">Back</span>
+        </button>
+
+        <div class="flex items-center space-x-2 cursor-pointer" onclick="LMCC_App.navigateTo('page-3')">
+          <div class="w-9 h-9 rounded-lg bg-sky-500 flex items-center justify-center font-bold text-white shadow">
+            <i data-lucide="shield-check" class="w-5 h-5"></i>
+          </div>
+          <span class="font-bold text-lg tracking-tight hidden sm:inline-block">METRIYA</span>
+        </div>
+      </div>
+
+      <!-- Right: User Badge & Role -->
+      <div class="flex items-center space-x-3">
+        <div class="text-right hidden md:block">
+          <div id="header-user-name" class="text-sm font-semibold">Inspector Sharma</div>
+          <div id="header-user-role" class="text-xs text-sky-300">Inspector • Zone 4</div>
+        </div>
+        <button onclick="LMCC_App.navigateTo('page-14')" class="w-10 h-10 rounded-full bg-sky-600 text-white flex items-center justify-center font-bold shadow hover:bg-sky-500" aria-label="Open Profile Settings">
+          <i data-lucide="user" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- =========================================================
+       SIDEBAR / MOBILE NAVIGATION DRAWER
+       ========================================================= -->
+  <div id="drawer-backdrop" class="drawer-backdrop no-print fixed inset-0 z-50 hidden opacity-0"></div>
+  <aside id="nav-drawer" class="drawer-content no-print fixed top-0 left-0 bottom-0 w-72 bg-navy-800 text-white z-50 shadow-2xl transform -translate-x-full flex flex-col">
+    <div class="p-5 border-b border-slate-700 flex items-center justify-between">
+      <div class="flex items-center space-x-3">
+        <div class="w-9 h-9 rounded-lg bg-sky-500 flex items-center justify-center text-white">
+          <i data-lucide="scale" class="w-5 h-5"></i>
+        </div>
+        <div>
+          <h2 class="font-bold text-base leading-tight">Legal Metrology</h2>
+          <p class="text-xs text-sky-300">Rules, 2011 Compliance</p>
+        </div>
+      </div>
+      <button id="btn-close-drawer" class="p-1 rounded hover:bg-navy-900 text-slate-300">
+        <i data-lucide="x" class="w-6 h-6"></i>
+      </button>
+    </div>
+
+    <nav class="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
+      <a href="#" onclick="LMCC_App.navigateTo('page-3'); return false;" class="nav-item flex items-center px-4 py-3 text-sm font-medium rounded-lg hover:bg-sky-900/50 hover:text-sky-200 transition-colors">
+        <i data-lucide="home" class="w-5 h-5 mr-3 text-sky-400"></i> Home Dashboard
+      </a>
+      <a href="#" onclick="LMCC_App.navigateTo('page-4'); return false;" class="nav-item flex items-center px-4 py-3 text-sm font-medium rounded-lg hover:bg-sky-900/50 hover:text-sky-200 transition-colors">
+        <i data-lucide="camera" class="w-5 h-5 mr-3 text-sky-400"></i> Scan Product
+      </a>
+      <a href="#" onclick="LMCC_App.navigateTo('page-10'); return false;" class="nav-item flex items-center px-4 py-3 text-sm font-medium rounded-lg hover:bg-sky-900/50 hover:text-sky-200 transition-colors">
+        <i data-lucide="history" class="w-5 h-5 mr-3 text-sky-400"></i> Inspection History
+      </a>
+      <a href="#" onclick="LMCC_App.navigateTo('page-9'); return false;" class="nav-item flex items-center px-4 py-3 text-sm font-medium rounded-lg hover:bg-sky-900/50 hover:text-sky-200 transition-colors">
+        <i data-lucide="file-text" class="w-5 h-5 mr-3 text-sky-400"></i> Reports & Export
+      </a>
+      <a href="#" onclick="LMCC_App.navigateTo('page-11'); return false;" class="nav-item flex items-center px-4 py-3 text-sm font-medium rounded-lg hover:bg-sky-900/50 hover:text-sky-200 transition-colors">
+        <i data-lucide="bar-chart-3" class="w-5 h-5 mr-3 text-sky-400"></i> Enforcement Dashboard
+      </a>
+      <a href="#" onclick="LMCC_App.navigateTo('page-13'); return false;" class="nav-item flex items-center px-4 py-3 text-sm font-medium rounded-lg hover:bg-sky-900/50 hover:text-sky-200 transition-colors">
+        <i data-lucide="search" class="w-5 h-5 mr-3 text-sky-400"></i> Search & Filter
+      </a>
+      <a href="#" onclick="LMCC_App.navigateTo('page-14'); return false;" class="nav-item flex items-center px-4 py-3 text-sm font-medium rounded-lg hover:bg-sky-900/50 hover:text-sky-200 transition-colors">
+        <i data-lucide="settings" class="w-5 h-5 mr-3 text-sky-400"></i> Settings & Roles
+      </a>
+    </nav>
+
+    <div class="p-4 border-t border-slate-700">
+      <button onclick="LMCC_App.logout()" class="w-full flex items-center justify-center px-4 py-2.5 text-sm font-semibold rounded-lg bg-red-600/20 text-red-300 hover:bg-red-600 hover:text-white transition-colors">
+        <i data-lucide="log-out" class="w-4 h-4 mr-2"></i> Log Out
+      </button>
+    </div>
+  </aside>
+
+  <!-- =========================================================
+       MAIN CONTENT CONTAINER (Houses all 14 pages dynamically)
+       ========================================================= -->
+  <main class="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 lg:p-8">
+
+    <!-- PAGE 1: WELCOME SCREEN -->
+    <section id="page-1" class="page-view min-h-[80vh] flex flex-col items-center justify-center text-center p-4">
+      <div class="w-24 h-24 rounded-3xl bg-navy-800 text-sky-400 flex items-center justify-center mb-6 shadow-xl border-4 border-sky-500/20">
+        <i data-lucide="scale" class="w-12 h-12"></i>
+      </div>
+      
+      <h1 class="text-3xl sm:text-4xl font-extrabold text-navy-800 tracking-tight mb-3">
+        METRIYA
+      </h1>
+      <p class="text-lg sm:text-xl text-slate-600 font-medium max-w-md mb-8">
+        Scan • Analyze • Ensure Compliance
+      </p>
+
+      <div class="w-full max-w-xs space-y-4">
+        <button
+    type="button"
+    onclick="
+        document.getElementById('page-1').classList.add('hidden');
+        document.getElementById('page-2').classList.remove('hidden');
+        window.scrollTo(0, 0);
+    "
+    class="w-full py-4 px-6 bg-navy-800 hover:bg-navy-900 text-white font-bold text-lg rounded-2xl shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-0.5 flex items-center justify-center"
+>
+    <span>Get Started</span>
+    <i data-lucide="arrow-right" class="w-5 h-5 ml-2"></i>
+</button>
+      </div>
+
+      <div class="mt-12 text-xs text-slate-500 font-medium">
+        Legal Metrology (Packaged Commodities) Rules, 2011 Inspection System
+      </div>
+    </section>
+
+    <!-- PAGE 2: LOGIN & AUTHENTICATION -->
+    <section id="page-2" class="page-view hidden max-w-md mx-auto py-8">
+      <div class="mb-6 flex items-center">
+        <button onclick="LMCC_App.navigateTo('page-1')" class="p-2 rounded-lg hover:bg-slate-200 text-slate-700" aria-label="Back to welcome">
+          <i data-lucide="arrow-left" class="w-6 h-6"></i>
+        </button>
+        <span class="text-xs font-semibold text-slate-500 ml-2">Back to Welcome</span>
+      </div>
+
+      <div class="bg-white p-6 sm:p-8 rounded-3xl shadow-lg border border-slate-200">
+        <h2 class="text-2xl font-bold text-navy-800 mb-1">Welcome</h2>
+        <p class="text-sm text-slate-500 mb-6">Sign in to continue inspection portal</p>
+
+        <form
+    id="login-form"
+    onsubmit="
+        event.preventDefault();
+
+        document.getElementById('page-2').classList.add('hidden');
+        document.getElementById('page-3').classList.remove('hidden');
+
+        window.scrollTo(0, 0);
+
+        return false;
+    "
+    class="space-y-4"
+>
+          <div id="login-error" class="hidden p-3 bg-red-50 border border-red-200 text-red-700 rounded-xl text-xs font-medium"></div>
+
+          <div>
+            <label for="login-email" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Email / Mobile Number</label>
+            <input type="text" id="login-email" required value="inspector.sharma@lmcc.gov.in" class="w-full px-4 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-sky-500 focus:border-sky-500 text-sm" placeholder="inspector@lmcc.gov.in">
+          </div>
+
+          <div>
+            <label for="login-password" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Password</label>
+            <div class="relative">
+              <input type="password" id="login-password" required value="password123" class="w-full px-4 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-sky-500 focus:border-sky-500 text-sm pr-10" placeholder="••••••••">
+              <button type="button" onclick="LMCC_App.togglePasswordVisibility('login-password')" class="absolute right-3 top-3 text-slate-400 hover:text-slate-600">
+                <i data-lucide="eye" class="w-5 h-5"></i>
+              </button>
+            </div>
+          </div>
+
+          <div class="flex items-center justify-between text-xs pt-1">
+            <label class="flex items-center space-x-2 text-slate-600 cursor-pointer">
+              <input type="checkbox" checked class="rounded border-slate-300 text-sky-600 focus:ring-sky-500">
+              <span>Remember Me</span>
+            </label>
+            <a href="#" onclick="LMCC_App.openForgotPasswordModal(); return false;" class="font-semibold text-sky-600 hover:underline">Forgot Password?</a>
+          </div>
+
+          <button type="submit" class="w-full py-3.5 bg-navy-800 hover:bg-navy-900 text-white font-bold rounded-xl shadow transition-all">
+            Login
+          </button>
+        </form>
+
+        <div class="my-6 flex items-center justify-center">
+          <div class="border-t border-slate-200 flex-1"></div>
+          <span class="px-3 text-xs font-bold text-slate-400">OR</span>
+          <div class="border-t border-slate-200 flex-1"></div>
+        </div>
+
+        <div class="space-y-3">
+          <button onclick="LMCC_App.handleGoogleAuth()" class="w-full py-3 px-4 border border-slate-300 rounded-xl font-semibold text-sm text-slate-700 hover:bg-slate-50 flex items-center justify-center gap-2">
+            <svg class="w-4 h-4" viewBox="0 0 24 24"><path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.665-5.17 3.665-9.17z"/><path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.28v3.15C3.26 21.3 7.35 24 12 24z"/><path fill="#FBBC05" d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.28C.46 8.21 0 10.05 0 12s.46 3.79 1.28 5.42l4-3.15z"/><path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.35 0 3.26 2.7 1.28 6.58l4 3.15c.95-2.83 3.6-4.98 6.72-4.98z"/></svg>
+            Continue with Google
+          </button>
+
+          <button onclick="LMCC_App.openOTPModal()" class="w-full py-3 px-4 border border-slate-300 rounded-xl font-semibold text-sm text-slate-700 hover:bg-slate-50 flex items-center justify-center gap-2">
+            <i data-lucide="smartphone" class="w-4 h-4 text-sky-600"></i>
+            Login with OTP
+          </button>
+        </div>
+
+        <div class="mt-6 text-center text-xs text-slate-600">
+          Don't have an account? 
+          <a href="#" onclick="LMCC_App.openSignUpModal(); return false;" class="font-bold text-sky-600 hover:underline">Sign Up</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- PAGE 3: HOME DASHBOARD -->
+    <section id="page-3" class="page-view hidden space-y-6">
+      <!-- Header banner -->
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-6 rounded-3xl shadow-sm border border-slate-200">
+        <div>
+          <h1 class="text-2xl font-bold text-navy-800">Hello, Inspector 👋</h1>
+          <p class="text-sm text-slate-500">Ensure safe and compliant packaged commodities.</p>
+        </div>
+        <button onclick="LMCC_App.navigateTo('page-4')" class="py-3 px-6 bg-navy-800 hover:bg-navy-900 text-white font-bold rounded-xl shadow-md flex items-center justify-center gap-2 transition-all">
+          <i data-lucide="camera" class="w-5 h-5 text-sky-400"></i>
+          <span>📷 Scan Image</span>
+        </button>
+      </div>
+
+      <!-- Main Feature Card -->
+      <div class="bg-gradient-to-r from-navy-800 to-sky-900 rounded-3xl p-6 text-white shadow-lg relative overflow-hidden">
+        <div class="relative z-10 max-w-lg">
+          <span class="inline-block px-3 py-1 bg-sky-500/30 text-sky-200 rounded-full text-xs font-semibold mb-3 border border-sky-400/20">Legal Metrology Rules 2011</span>
+          <h2 class="text-xl sm:text-2xl font-bold mb-2">Upload image to check compliance</h2>
+          <p class="text-sm text-sky-100 mb-6">Instantly detect mandatory packaging declarations, font size compliance, MRP height, and FSSAI license numbers using multi-engine OCR verification.</p>
+          <button onclick="LMCC_App.navigateTo('page-4')" class="py-3 px-6 bg-sky-500 hover:bg-sky-400 text-white font-bold rounded-xl shadow flex items-center gap-2">
+            <i data-lucide="upload-cloud" class="w-5 h-5"></i>
+            <span>Upload Product Image</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Statistics Section -->
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <!-- Total Scans -->
+        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center space-x-4">
+          <div class="w-12 h-12 rounded-xl bg-sky-100 text-sky-700 flex items-center justify-center font-bold">
+            <i data-lucide="layers" class="w-6 h-6"></i>
+          </div>
+          <div>
+            <div class="text-xs font-bold text-slate-500 uppercase tracking-wider">Total Scans</div>
+            <div id="stat-total-scans" class="text-2xl font-extrabold text-navy-800">0</div>
+          </div>
+        </div>
+
+        <!-- Compliant -->
+        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center space-x-4">
+          <div class="w-12 h-12 rounded-xl bg-green-100 text-green-700 flex items-center justify-center font-bold">
+            <i data-lucide="check-circle-2" class="w-6 h-6"></i>
+          </div>
+          <div>
+            <div class="text-xs font-bold text-slate-500 uppercase tracking-wider">Compliant</div>
+            <div id="stat-compliant-scans" class="text-2xl font-extrabold text-green-600">0</div>
+          </div>
+        </div>
+
+        <!-- Non-Compliant -->
+        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center space-x-4">
+          <div class="w-12 h-12 rounded-xl bg-red-100 text-red-700 flex items-center justify-center font-bold">
+            <i data-lucide="alert-triangle" class="w-6 h-6"></i>
+          </div>
+          <div>
+            <div class="text-xs font-bold text-slate-500 uppercase tracking-wider">Non-Compliant</div>
+            <div id="stat-noncompliant-scans" class="text-2xl font-extrabold text-red-600">0</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Recent Scans Section -->
+      <div class="bg-white rounded-3xl border border-slate-200 p-6 shadow-sm">
+        <div class="flex items-center justify-between mb-4">
+          <h3 class="text-lg font-bold text-navy-800">Recent Scans</h3>
+          <button onclick="LMCC_App.navigateTo('page-10')" class="text-xs font-bold text-sky-600 hover:underline">View All History</button>
+        </div>
+
+        <div id="dashboard-recent-list" class="divide-y divide-slate-100">
+          <!-- Dynamically Rendered via App.js -->
+        </div>
+      </div>
+    </section>
+
+    <!-- PAGE 4: SCAN PRODUCT / IMAGE UPLOAD -->
+    <section id="page-4" class="page-view hidden max-w-xl mx-auto space-y-6">
+      <div class="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-md">
+        <h2 class="text-2xl font-bold text-navy-800 mb-1">Scan Product</h2>
+        <p class="text-sm text-slate-500 mb-6">Upload clear product packaging image for compliance verification.</p>
+
+        <!-- Dropzone Box -->
+        <div id="upload-dropzone" class="dropzone p-8 rounded-2xl text-center cursor-pointer mb-6" onclick="document.getElementById('file-input').click()">
+          <input type="file" id="file-input" accept="image/jpeg,image/png" multiple class="hidden" onchange="LMCC_App.handleFileSelect(event)">
+          
+          <div class="w-16 h-16 rounded-full bg-sky-100 text-sky-600 mx-auto flex items-center justify-center mb-4">
+            <i data-lucide="upload-cloud" class="w-8 h-8"></i>
+          </div>
+          
+          <h3 class="font-bold text-slate-800 mb-1">Tap to upload images</h3>
+          <p class="text-xs text-slate-500 mb-3">Select multiple images OR Drag & Drop here</p>
+          <p class="text-xs text-slate-400 font-medium">Supported Formats: JPG, PNG • Up to 5 images • Maximum 10 MB each</p>
+        </div>
+
+        <!-- Validation Error Message Alert -->
+        <div id="upload-error" class="hidden p-4 mb-4 bg-red-50 border border-red-200 text-red-700 rounded-2xl text-xs font-semibold flex items-center">
+          <i data-lucide="alert-circle" class="w-5 h-5 mr-2 shrink-0"></i>
+          <span id="upload-error-text">Please select a valid JPG or PNG image under 10 MB.</span>
+        </div>
+
+        <!-- Image Preview Container -->
+        <div id="image-preview-container" class="hidden border border-slate-200 rounded-2xl p-4 mb-6 bg-slate-50">
+          <div class="flex items-center space-x-4 mb-3">
+            <img id="preview-img" alt="Uploaded product preview" class="w-20 h-20 object-cover rounded-xl border border-slate-300">
+            <div class="flex-1 overflow-hidden">
+              <div id="preview-filename" class="font-bold text-sm text-slate-800 truncate">image.jpg</div>
+              <div id="preview-filesize" class="text-xs text-slate-500">2.4 MB</div>
+              <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold bg-green-100 text-green-800 mt-1">
+                ✓ Ready for OCR Analysis
+              </span>
+            </div>
+          </div>
+          <div class="flex space-x-2">
+            <button type="button" onclick="document.getElementById('file-input').click()" class="flex-1 py-2 px-3 text-xs font-bold rounded-lg border border-slate-300 bg-white text-slate-700 hover:bg-slate-100">
+              Replace Image
+            </button>
+            <button type="button" onclick="LMCC_App.clearUploadedImage()" class="py-2 px-3 text-xs font-bold rounded-lg border border-red-200 bg-red-50 text-red-600 hover:bg-red-100">
+              Remove
+            </button>
+          </div>
+        </div>
+
+        <!-- Upload Action & Continue Buttons -->
+        <div class="space-y-3">
+          <input type="file" id="camera-input" accept="image/*" capture="environment" class="hidden" onchange="LMCC_App.handleFiles(Array.from(event.target.files))">
+          
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <button id="btn-trigger-camera" onclick="document.getElementById('camera-input').click()" class="py-3.5 bg-sky-600 hover:bg-sky-700 text-white font-bold rounded-xl shadow flex items-center justify-center gap-2">
+              <i data-lucide="camera" class="w-5 h-5"></i>
+              <span>📷 Snap Photo</span>
+            </button>
+
+            <button id="btn-trigger-upload" onclick="document.getElementById('file-input').click()" class="py-3.5 bg-slate-800 hover:bg-slate-900 text-white font-bold rounded-xl shadow flex items-center justify-center gap-2">
+              <i data-lucide="image" class="w-5 h-5"></i>
+              <span>Upload Gallery</span>
+            </button>
+          </div>
+
+          <button id="btn-start-analysis" onclick="LMCC_App.startProductAnalysis()" disabled class="w-full py-3.5 bg-navy-800 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-navy-900 text-white font-bold rounded-xl shadow flex items-center justify-center gap-2">
+            <span>Continue</span>
+            <i data-lucide="arrow-right" class="w-5 h-5"></i>
+          </button>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- PAGE 5: ANALYSIS RESULT -->
+    <section id="page-5" class="page-view hidden max-w-2xl mx-auto space-y-6">
+      
+      <!-- Loading Step Progress State -->
+      <div id="analysis-loading-box" class="bg-white p-8 rounded-3xl border border-slate-200 shadow-md text-center space-y-4">
+        <div class="w-16 h-16 rounded-full bg-sky-100 text-sky-600 mx-auto flex items-center justify-center animate-spin">
+          <i data-lucide="loader-2" class="w-8 h-8"></i>
+        </div>
+        <h3 id="analysis-step-title" class="text-xl font-bold text-navy-800">Analyzing Product...</h3>
+        <p id="analysis-step-detail" class="text-sm text-slate-500">Reading product label & extracting Legal Metrology parameters...</p>
+        <div class="w-full bg-slate-200 rounded-full h-2 overflow-hidden max-w-sm mx-auto">
+          <div id="analysis-progress-bar" class="bg-sky-500 h-2 transition-all duration-300 w-1/4"></div>
+        </div>
+      </div>
+<div
+    id="analysis-error"
+    class="hidden p-5 rounded-2xl bg-red-50 border border-red-200 text-red-700"
+>
+    <div class="font-bold text-sm mb-2">
+        Analysis Failed
+    </div>
+
+    <div id="analysis-error-message"
+         class="text-xs">
+    </div>
+</div>
+      <!-- Analysis Result Card -->
+      <div id="analysis-result-content" class="hidden space-y-6">
+        <div class="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-md">
+          <div class="flex flex-col sm:flex-row items-center justify-between gap-4 mb-6 pb-6 border-b border-slate-100">
+            <div>
+              <span class="text-xs font-bold uppercase tracking-wider text-slate-400">Analysis Result</span>
+              <h2 id="result-product-title" class="text-2xl font-extrabold text-navy-800">Scanned Product</h2>
+            </div>
+            
+            <!-- Dynamic Compliance Badge -->
+            <div id="result-status-badge" class="px-4 py-2 rounded-2xl text-sm font-extrabold flex items-center gap-2 border">
+              <span id="result-status-icon">🟢</span>
+              <span id="result-status-text">Review Required</span>
+            </div>
+          </div>
+
+          <!-- Uploaded Product Image Display -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-6">
+            <div class="border border-slate-200 rounded-2xl overflow-hidden bg-slate-100 flex items-center justify-center p-2 h-56">
+              <img id="result-uploaded-image" alt="Scanned Product Packaging" class="max-h-full max-w-full object-contain rounded-xl">
+            </div>
+
+            <!-- Score Progress Bar & Summary -->
+            <div class="flex flex-col justify-center space-y-4">
+              <div>
+                <div class="flex items-center justify-between text-sm font-bold mb-1">
+                  <span class="text-slate-600">Compliance Score</span>
+                  <span id="result-score-val" class="text-lg text-navy-800 font-black"><span id="result-compliance-score">0 / 100</span>
+                </div>
+                <div class="w-full bg-slate-200 rounded-full h-3 overflow-hidden">
+                  <div id="result-score-bar" class="bg-green-600 h-3 transition-all" style="width: 0%"></div>
+                </div>
+              </div>
+
+              <div id="result-summary-message" class="p-4 rounded-2xl bg-green-50 text-green-800 text-xs font-semibold border border-green-200">
+                "The product meets all mandatory declarations as per Legal Metrology Rules, 2011."
+              </div>
+            </div>
+          </div>
+
+          <!-- Key Findings List -->
+          <div class="mb-6">
+            <h3 class="font-bold text-sm text-navy-800 mb-3 uppercase tracking-wider">Key Findings</h3>
+            <div id="result-key-findings" class="space-y-2 text-xs font-medium text-slate-700">
+              <div class="flex items-center text-green-700"><i data-lucide="check-circle" class="w-4 h-4 mr-2 shrink-0"></i> All mandatory declarations found</div>
+              <div class="flex items-center text-green-700"><i data-lucide="check-circle" class="w-4 h-4 mr-2 shrink-0"></i> Readability and font size require visual verification</div>
+              <div class="flex items-center text-green-700"><i data-lucide="check-circle" class="w-4 h-4 mr-2 shrink-0"></i> Proper placement of information</div>
+            </div>
+          </div>
+
+          <!-- Actions & Next Step -->
+          <div class="space-y-3 pt-4 border-t border-slate-100">
+            <button onclick="LMCC_App.navigateTo('page-6')" class="w-full py-4 bg-navy-800 hover:bg-navy-900 text-white font-bold rounded-2xl shadow flex items-center justify-center gap-2">
+              <span>View Extracted Declarations</span>
+              <i data-lucide="arrow-right" class="w-5 h-5"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PAGE 6: EXTRACTED DECLARATIONS -->
+    <section id="page-6" class="page-view hidden max-w-2xl mx-auto space-y-6">
+      <div class="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-md">
+        <div class="flex items-center justify-between mb-6 pb-4 border-b border-slate-100">
+          <h2 class="text-2xl font-extrabold text-navy-800">Extracted Declarations</h2>
+          <span class="text-xs font-semibold px-3 py-1 bg-sky-100 text-sky-700 rounded-full">Section 8 Standard Data</span>
+        </div>
+
+        <h3 class="text-sm font-bold uppercase tracking-wider text-slate-500 mb-4">Product Information</h3>
+
+        <!-- Structured 2-Column Grid -->
+        <div id="declarations-grid" class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+          <div class="p-3 bg-slate-50 rounded-xl border border-slate-200">
+            <div class="text-xs font-bold text-slate-400">Product Name</div>
+            <div class="font-bold text-sm text-slate-800" id="decl-name">Not Detected</div>
+          </div>
+          <div class="p-3 bg-slate-50 rounded-xl border border-slate-200">
+            <div class="text-xs font-bold text-slate-400">Net Quantity</div>
+            <div class="font-bold text-sm text-slate-800" id="decl-qty">Not Detected</div>
+          </div>
+          <div class="p-3 bg-slate-50 rounded-xl border border-slate-200">
+            <div class="text-xs font-bold text-slate-400">M.R.P.</div>
+            <div class="font-bold text-sm text-slate-800" id="decl-mrp">Not Detected</div>
+          </div>
+          <div class="p-3 bg-slate-50 rounded-xl border border-slate-200">
+            <div class="text-xs font-bold text-slate-400">Batch No.</div>
+            <div class="font-bold text-sm text-slate-800" id="decl-batch">Not Detected</div>
+          </div>
+          <div class="p-3 bg-slate-50 rounded-xl border border-slate-200">
+            <div class="text-xs font-bold text-slate-400">Manufacturing Date</div>
+            <div class="font-bold text-sm text-slate-800" id="decl-mfg">Not Detected</div>
+          </div>
+          <div class="p-3 bg-slate-50 rounded-xl border border-slate-200">
+            <div class="text-xs font-bold text-slate-400">Best Before</div>
+            <div class="font-bold text-sm text-slate-800" id="decl-bestbefore">Not Detected</div>
+          </div>
+          <div class="p-3 bg-slate-50 rounded-xl border border-slate-200 sm:col-span-2">
+            <div class="text-xs font-bold text-slate-400">Manufacturer</div>
+            <div class="font-bold text-sm text-slate-800" id="decl-manufacturer">Not Detected</div>
+          </div>
+          <div class="p-3 bg-slate-50 rounded-xl border border-slate-200 sm:col-span-2">
+            <div class="text-xs font-bold text-slate-400">Address</div>
+            <div class="font-bold text-sm text-slate-800" id="decl-address">Not Detected</div>
+          </div>
+          <div class="p-3 bg-slate-50 rounded-xl border border-slate-200 sm:col-span-2">
+            <div class="text-xs font-bold text-slate-400">FSSAI License No.</div>
+            <div class="font-bold text-sm text-slate-800" id="decl-fssai">Not Detected</div>
+          </div>
+        </div>
+
+        <!-- Validation Card -->
+        <div id="declarations-validation-card" class="p-4 rounded-2xl bg-green-50 border border-green-200 text-green-800 text-sm font-bold flex items-center mb-6">
+          <i data-lucide="check-circle" class="w-5 h-5 mr-3 shrink-0"></i>
+          <span>🟢 All mandatory declarations found</span>
+        </div>
+
+        <button onclick="LMCC_App.navigateTo('page-7')" class="w-full py-4 bg-navy-800 hover:bg-navy-900 text-white font-bold rounded-2xl shadow flex items-center justify-center gap-2">
+          <span>→ Continue to Compliance Check</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- PAGE 7: COMPLIANCE / VIOLATION REPORT -->
+    <section id="page-7" class="page-view hidden max-w-2xl mx-auto space-y-6">
+      <div class="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-md space-y-6">
+        <div class="flex items-center justify-between pb-4 border-b border-slate-100">
+          <div>
+            <span class="text-xs font-bold uppercase tracking-wider text-slate-400">Legal Rule Evaluation</span>
+            <h2 class="text-2xl font-extrabold text-navy-800">METRIYA - Legal Metrology Inspection Report</h2>
+          </div>
+          
+          <div class="px-3 py-1.5 rounded-xl bg-red-100 text-red-700 font-extrabold text-sm border border-red-200 flex items-center gap-1.5">
+            <span id="report-status-text">🟡 Review Required</span>
+          </div>
+        </div>
+
+        <div class="p-4 rounded-2xl bg-red-50 border border-red-200 text-red-800 text-sm font-semibold">
+          Waiting for compliance result.
+          <span id="report-score">0 / 100</span>
+        </div>
+
+        <!-- Violations List -->
+        <div>
+          <h3 class="text-sm font-bold uppercase tracking-wider text-slate-500 mb-3">Detected Violations</h3>
+          <div class="space-y-3">
+            <div id="report-violations"
+     class="space-y-3">
+
+    <div class="p-4 rounded-2xl border border-yellow-200 bg-yellow-50">
+        <div class="font-semibold text-yellow-800">
+            No confirmed violations detected.
+        </div>
+        <div class="text-xs text-yellow-700 mt-1">
+            Missing or uncertain declarations require review.
+        </div>
+    </div>
+
+</div>
+
+            
+
+        <!-- Recommendations -->
+        <div>
+          <h3 class="text-sm font-bold uppercase tracking-wider text-slate-500 mb-3">Recommendations</h3>
+          <div class="space-y-2 text-xs font-semibold text-slate-700">
+            <div class="p-3 bg-amber-50 rounded-xl border border-amber-200 text-amber-900 flex items-center">
+              <span class="mr-2">💡</span> Increase font size for M.R.P.
+            </div>
+            <div class="p-3 bg-amber-50 rounded-xl border border-amber-200 text-amber-900 flex items-center">
+              <span class="mr-2">💡</span> Add country of origin.
+            </div>
+            <div class="p-3 bg-amber-50 rounded-xl border border-amber-200 text-amber-900 flex items-center">
+              <span class="mr-2">💡</span> Complete manufacturer address.
+            </div>
+          </div>
+        </div>
+
+        <button onclick="LMCC_App.navigateTo('page-8')" class="w-full py-4 bg-navy-800 hover:bg-navy-900 text-white font-bold rounded-2xl shadow flex items-center justify-center gap-2">
+          <span>→ Continue to Font & Readability Analysis</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- PAGE 8: FONT & READABILITY ANALYSIS -->
+    <section id="page-8" class="page-view hidden max-w-2xl mx-auto space-y-6">
+      <div class="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-md space-y-6">
+        <h2 class="text-2xl font-extrabold text-navy-800 pb-4 border-b border-slate-100">Font & Readability Analysis</h2>
+
+        <!-- M.R.P. Analysis Section -->
+        <div class="p-5 rounded-2xl bg-slate-50 border border-slate-200 space-y-3">
+          <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400">M.R.P. Analysis</h3>
+          <div id="readability-mrp" class="text-xl font-bold text-navy-800">M.R.P. Not detected</div>
+
+          <div class="grid grid-cols-2 gap-4 text-xs">
+            <div>
+              <span class="text-slate-500">Detected Font Size:</span>
+              <div id="readability-font-size" class="text-base font-bold text-yellow-600">Not measured</div>
+            </div>
+            <div>
+              <span class="text-slate-500">Required:</span>
+              <div class="text-base font-bold text-slate-800">≥ 1.0 mm</div>
+            </div>
+          </div>
+
+          <div id="readability-font-status" class="pt-2 text-xs font-extrabold text-yellow-600 flex items-center">
+            <span class="mr-1.5">🟡</span> Visual verification required
+          </div>
+        </div>
+
+        <!-- Declared Fields Section -->
+        <div>
+          <h3 class="text-sm font-bold uppercase tracking-wider text-slate-500 mb-3">Declared Fields Legibility</h3>
+          <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 text-xs font-semibold">
+            <div class="p-3 rounded-xl bg-green-50 border border-green-200 text-green-800 flex items-center justify-between">
+              <span>Product Name</span> <span class="text-green-600 font-bold">✓</span>
+            </div>
+            <div class="p-3 rounded-xl bg-green-50 border border-green-200 text-green-800 flex items-center justify-between">
+              <span>Net Quantity</span> <span class="text-green-600 font-bold">✓</span>
+            </div>
+            <div class="p-3 rounded-xl bg-green-50 border border-green-200 text-green-800 flex items-center justify-between">
+              <span>Batch No.</span> <span class="text-green-600 font-bold">✓</span>
+            </div>
+            <div class="p-3 rounded-xl bg-green-50 border border-green-200 text-green-800 flex items-center justify-between">
+              <span>Manufacturing Date</span> <span class="text-green-600 font-bold">✓</span>
+            </div>
+            <div class="p-3 rounded-xl bg-green-50 border border-green-200 text-green-800 flex items-center justify-between">
+              <span>Best Before</span> <span class="text-green-600 font-bold">✓</span>
+            </div>
+            <div class="p-3 rounded-xl bg-green-50 border border-green-200 text-green-800 flex items-center justify-between">
+              <span>FSSAI No.</span> <span class="text-green-600 font-bold">✓</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Readability Summary -->
+        <div class="p-4 rounded-2xl bg-green-50 border border-green-200 text-green-800 text-sm font-bold flex items-center">
+          <span class="mr-2">🟢</span> Text is clear and legible.
+        </div>
+
+        <button onclick="LMCC_App.navigateTo('page-9')" class="w-full py-4 bg-navy-800 hover:bg-navy-900 text-white font-bold rounded-2xl shadow flex items-center justify-center gap-2">
+          <span>→ Continue to METRIYA - Legal Metrology Inspection Report</span>
+          <i data-lucide="arrow-right" class="w-5 h-5"></i>
+        </button>
+      </div>
+    </section>
+
+    <!-- PAGE 9: COMPLIANCE REPORT -->
+    <section id="page-9" class="page-view hidden max-w-3xl mx-auto space-y-6">
+      <div id="pdf-report-container" class="bg-white p-6 sm:p-10 rounded-3xl border border-slate-200 shadow-lg space-y-6">
+        
+        <!-- Header -->
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between border-b pb-6 border-slate-200 gap-4">
+          <div>
+            <div class="text-xs font-bold text-sky-600 uppercase tracking-widest">METRIYA - Legal Metrology Inspection Report</div>
+            <h1 id="report-product-name" class="text-2xl font-black text-navy-800">Scanned Product</h1>
+            <div class="text-xs text-slate-500">Manufacturer / Marketer: <span id="report-manufacturer">Not detected</span></div>
+          </div>
+          
+          <div class="text-left sm:text-right">
+            <div class="text-xs font-bold text-slate-400">Report ID: <span id="report-id" class="text-slate-800">METRIYA-SCAN</span></div>
+            <div class="text-xs font-bold text-slate-400">Inspection Date: <span id="report-date" class="text-slate-800">—</span></div>
+          </div>
+        </div>
+
+        <!-- Product Details Summary -->
+        <div>
+          <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3">Product Specifications</h3>
+          <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 text-xs">
+            <div class="p-3 bg-slate-50 rounded-xl"><strong>MRP:</strong> <span id="report-mrp">Not detected</span></div>
+            <div class="p-3 bg-slate-50 rounded-xl"><strong>Net Quantity:</strong> <span id="report-quantity">Not detected</span></div>
+            <div class="p-3 bg-slate-50 rounded-xl"><strong>Batch No.:</strong> <span id="report-batch">Not detected</span></div>
+            <div class="p-3 bg-slate-50 rounded-xl"><strong>Mfg. Date:</strong> <span id="report-mfd">Not detected</span></div>
+            <div class="p-3 bg-slate-50 rounded-xl"><strong>Expiry / Use By:</strong> <span id="report-expiry">Not detected</span></div>
+            <div class="p-3 bg-slate-50 rounded-xl"><strong>FSSAI License:</strong> <span id="report-fssai">Not detected</span></div>
+            <div class="p-3 bg-slate-50 rounded-xl"><strong>Customer Care:</strong> <span id="report-customer-care">Not detected</span></div>
+            <div class="p-3 bg-slate-50 rounded-xl sm:col-span-3"><strong>Manufacturer Address:</strong> <span id="report-address">Not detected</span></div>
+          </div>
+        </div>
+
+        <!-- Compliance Summary -->
+        <div class="p-5 rounded-2xl bg-slate-50 border border-slate-200 space-y-3">
+          <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400">Compliance Summary</h3>
+          
+          <div class="space-y-2 text-xs font-semibold">
+            <div class="flex justify-between items-center">
+              <span>Mandatory Declarations</span>
+              <span id="report-mandatory-status" class="text-yellow-600 font-extrabold">REVIEW</span>
+            </div>
+            <div class="flex justify-between items-center">
+              <span>Font Size & Readability</span>
+              <span id="report-readability-status" class="text-yellow-600 font-extrabold">REVIEW</span>
+            </div>
+            <div class="flex justify-between items-center">
+              <span>Placement of Information</span>
+              <span id="report-placement-status" class="text-yellow-600 font-extrabold">REVIEW</span>
+            </div>
+          </div>
+
+          <div class="pt-3 border-t border-slate-200 flex items-center justify-between">
+            <span class="text-xs font-bold text-slate-600">Overall Status:</span>
+            <span id="report-status" class="px-3 py-1 bg-yellow-100 text-yellow-700 font-black rounded-lg text-xs">🟡 Review Required</span>
+          </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="no-print flex flex-col sm:flex-row gap-3 pt-4 border-t border-slate-100">
+          <button onclick="LMCC_App.downloadPDF()" class="flex-1 py-3.5 bg-navy-800 hover:bg-navy-900 text-white font-bold rounded-xl shadow flex items-center justify-center gap-2">
+            <i data-lucide="download" class="w-4 h-4"></i>
+            <span>Download PDF</span>
+          </button>
+          
+          <button onclick="LMCC_App.downloadExcel()" class="flex-1 py-3.5 bg-green-700 hover:bg-green-800 text-white font-bold rounded-xl shadow flex items-center justify-center gap-2">
+            <i data-lucide="file-spreadsheet" class="w-4 h-4"></i>
+            <span>Download Excel</span>
+          </button>
+        </div>
+
+        <div class="no-print pt-2">
+          <button onclick="LMCC_App.navigateTo('page-11')" class="w-full py-4 bg-sky-600 hover:bg-sky-700 text-white font-bold rounded-2xl shadow flex items-center justify-center gap-2">
+            <span>→ Continue to Enforcement Dashboard</span>
+          </button>
+        </div>
+
+      </div>
+    </section>
+
+
+    <!-- PAGE 10: SCANNED PRODUCTS / HISTORY -->
+    <section id="page-10" class="page-view hidden space-y-6">
+      <div class="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-md">
+        <h2 class="text-2xl font-extrabold text-navy-800 mb-6">Scanned Products</h2>
+
+        <!-- Search Field -->
+        <div class="relative mb-4">
+          <i data-lucide="search" class="w-5 h-5 absolute left-4 top-3.5 text-slate-400"></i>
+          <input type="text" id="history-search-input" onkeyup="LMCC_App.filterHistoryProducts()" placeholder="Search by product name, brand or barcode..." class="w-full pl-11 pr-4 py-3 rounded-2xl border border-slate-300 text-sm focus:ring-2 focus:ring-sky-500">
+        </div>
+
+        <!-- Filter Tabs -->
+        <div class="flex space-x-2 mb-6">
+          <button onclick="LMCC_App.setHistoryFilter('All')" class="history-tab px-4 py-2 rounded-xl text-xs font-bold bg-navy-800 text-white">All</button>
+          <button onclick="LMCC_App.setHistoryFilter('Compliant')" class="history-tab px-4 py-2 rounded-xl text-xs font-bold bg-slate-100 text-slate-600 hover:bg-slate-200">Compliant</button>
+          <button onclick="LMCC_App.setHistoryFilter('Non-Compliant')" class="history-tab px-4 py-2 rounded-xl text-xs font-bold bg-slate-100 text-slate-600 hover:bg-slate-200">Non-Compliant</button>
+        </div>
+
+        <!-- Product List -->
+        <div id="history-products-list" class="divide-y divide-slate-100">
+          <!-- Dynamically populated in App.js -->
+        </div>
+      </div>
+
+      <div class="pt-2">
+        <button onclick="LMCC_App.navigateTo('page-3')" class="w-full py-4 bg-navy-800 hover:bg-navy-900 text-white font-bold rounded-2xl shadow flex items-center justify-center gap-2">
+          <i data-lucide="home" class="w-5 h-5"></i>
+          <span>Go to Home Dashboard</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- PAGE 11: ENFORCEMENT OFFICER DASHBOARD -->
+    <section id="page-11" class="page-view hidden space-y-6">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <h1 class="text-2xl font-black text-navy-800">Enforcement Dashboard</h1>
+          <p class="text-sm text-slate-500">Legal Metrology Officer Analytics & Violation Summary</p>
+        </div>
+      </div>
+
+      <!-- Stats Cards -->
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
+          <div class="text-xs font-bold text-slate-500 uppercase">Total Inspections</div>
+          <div class="text-3xl font-extrabold text-navy-800 mt-1"><span id="enforcement-total">0</span></div>
+        </div>
+
+        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
+          <div class="text-xs font-bold text-slate-500 uppercase">Compliant Products</div>
+          <div class="text-3xl font-extrabold text-green-600 mt-1"><span id="enforcement-compliant">0</span></div>
+        </div>
+
+        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
+          <div class="text-xs font-bold text-slate-500 uppercase">Violations</div>
+          <div class="text-3xl font-extrabold text-red-600 mt-1"><span id="enforcement-violations">0</span></div>
+        </div>
+      </div>
+
+      <!-- Compliance Trend Chart -->
+      <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm">
+        <h3 class="text-base font-bold text-navy-800 mb-4">Monthly Compliance Trend</h3>
+        <div class="h-64">
+          <canvas id="enforcementTrendChart"></canvas>
+        </div>
+      </div>
+
+      <!-- Top Violations -->
+      <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm">
+        <h3 class="text-base font-bold text-navy-800 mb-4">Top Violations</h3>
+        
+        <div class="space-y-3">
+          <div onclick="LMCC_App.navigateTo('page-12')" class="p-4 bg-slate-50 rounded-2xl border border-slate-200 flex items-center justify-between cursor-pointer hover:bg-slate-100 transition-colors">
+            <span class="font-bold text-sm text-slate-800">Missing MRP</span>
+            <span class="px-3 py-1 bg-red-100 text-red-700 font-extrabold text-xs rounded-full">28</span>
+          </div>
+
+          <div onclick="LMCC_App.navigateTo('page-12')" class="p-4 bg-slate-50 rounded-2xl border border-slate-200 flex items-center justify-between cursor-pointer hover:bg-slate-100 transition-colors">
+            <span class="font-bold text-sm text-slate-800">Incorrect Font Size</span>
+            <span class="px-3 py-1 bg-red-100 text-red-700 font-extrabold text-xs rounded-full">18</span>
+          </div>
+
+          <div onclick="LMCC_App.navigateTo('page-12')" class="p-4 bg-slate-50 rounded-2xl border border-slate-200 flex items-center justify-between cursor-pointer hover:bg-slate-100 transition-colors">
+            <span class="font-bold text-sm text-slate-800">Missing FSSAI No.</span>
+            <span class="px-3 py-1 bg-red-100 text-red-700 font-extrabold text-xs rounded-full">12</span>
+          </div>
+
+          <div onclick="LMCC_App.navigateTo('page-12')" class="p-4 bg-slate-50 rounded-2xl border border-slate-200 flex items-center justify-between cursor-pointer hover:bg-slate-100 transition-colors">
+            <span class="font-bold text-sm text-slate-800">Incomplete Address</span>
+            <span class="px-3 py-1 bg-red-100 text-red-700 font-extrabold text-xs rounded-full">8</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="pt-2">
+        <button onclick="LMCC_App.navigateTo('page-10')" class="w-full py-4 bg-sky-600 hover:bg-sky-700 text-white font-bold rounded-2xl shadow flex items-center justify-center gap-2">
+          <i data-lucide="history" class="w-5 h-5"></i>
+          <span>View Scanned Products / History</span>
+          <i data-lucide="arrow-right" class="w-5 h-5"></i>
+        </button>
+      </div>
+    </section>
+
+    <!-- PAGE 12: VIOLATION DETAILS -->
+    <section id="page-12" class="page-view hidden max-w-2xl mx-auto space-y-6">
+      <div class="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-md space-y-6">
+        <h2 class="text-2xl font-extrabold text-navy-800">Violation Details</h2>
+
+        <!-- Product Info -->
+        <div class="p-4 bg-slate-50 rounded-2xl border border-slate-200 space-y-2">
+          <div class="text-xs font-bold uppercase text-slate-400">Product</div>
+          <div class="text-xl font-bold text-navy-800">Maggi 2-Minute Noodles</div>
+          <div class="grid grid-cols-2 gap-2 text-xs text-slate-600">
+            <div>Brand: <strong>Nestlé</strong></div>
+            <div>Batch No.: <strong>N3456</strong></div>
+            <div>Date: <strong>05 Apr 2025</strong></div>
+            <div>Location: <strong>Chennai, TN</strong></div>
+          </div>
+        </div>
+
+        <!-- Violations -->
+        <div>
+          <h3 class="text-xs font-bold uppercase text-slate-400 mb-3">Detected Violations</h3>
+          <div class="space-y-2 text-xs font-semibold text-red-700">
+            <div class="p-3 bg-red-50 rounded-xl border border-red-200 flex items-center">
+              <span class="mr-2">🔴</span> Missing FSSAI License Number
+            </div>
+            <div class="p-3 bg-red-50 rounded-xl border border-red-200 flex items-center">
+              <span class="mr-2">🔴</span> Font size below standard M.R.P.
+            </div>
+            <div class="p-3 bg-red-50 rounded-xl border border-red-200 flex items-center">
+              <span class="mr-2">🔴</span> Incomplete manufacturer address
+            </div>
+          </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="flex gap-3">
+          <button onclick="LMCC_App.navigateTo('page-10')" class="flex-1 py-3 bg-navy-800 text-white font-bold rounded-xl hover:bg-navy-900">
+            View Report
+          </button>
+          <button onclick="LMCC_App.downloadEvidence()" class="flex-1 py-3 bg-slate-200 text-slate-800 font-bold rounded-xl hover:bg-slate-300">
+            Download Evidence
+          </button>
+        </div>
+
+        <button onclick="LMCC_App.navigateTo('page-13')" class="w-full py-4 bg-sky-600 hover:bg-sky-700 text-white font-bold rounded-2xl shadow flex items-center justify-center gap-2">
+          <span>→ Search & Filter</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- PAGE 13: SEARCH & FILTER -->
+    <section id="page-13" class="page-view hidden space-y-6">
+      <div class="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-md space-y-6">
+        <h2 class="text-2xl font-extrabold text-navy-800">Search & Filter</h2>
+
+        <!-- Search Field -->
+        <div>
+          <label for="filter-search-input" class="block text-xs font-bold text-slate-500 uppercase mb-1">Search Keyword</label>
+          <input type="text" id="filter-search-input" placeholder="Search products, brands, FSSAI No." class="w-full px-4 py-3 rounded-xl border border-slate-300 text-sm">
+        </div>
+
+        <!-- Filters Form -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div>
+            <label for="filter-status" class="block text-xs font-bold text-slate-500 uppercase mb-1">Status</label>
+            <select id="filter-status" class="w-full px-3 py-2.5 rounded-xl border border-slate-300 text-sm bg-white">
+              <option value="All">All</option>
+              <option value="Compliant">Compliant</option>
+              <option value="Non-Compliant">Non-Compliant</option>
+            </select>
+          </div>
+
+          <div>
+            <label for="filter-date-range" class="block text-xs font-bold text-slate-500 uppercase mb-1">Date Range</label>
+            <select id="filter-date-range" class="w-full px-3 py-2.5 rounded-xl border border-slate-300 text-sm bg-white">
+              <option value="30">Last 30 days</option>
+              <option value="60">Last 60 days</option>
+              <option value="365">Last 1 year</option>
+            </select>
+          </div>
+
+          <div>
+            <label for="filter-category" class="block text-xs font-bold text-slate-500 uppercase mb-1">Product Category</label>
+            <select id="filter-category" class="w-full px-3 py-2.5 rounded-xl border border-slate-300 text-sm bg-white">
+              <option value="All">All Categories</option>
+              <option value="Food">Food & Confectionery</option>
+              <option value="Cosmetics">Personal Care</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Buttons -->
+        <div class="flex gap-3">
+          <button onclick="LMCC_App.resetFilters()" class="flex-1 py-3 bg-slate-100 text-slate-700 font-bold rounded-xl hover:bg-slate-200">
+            Reset
+          </button>
+          <button onclick="LMCC_App.applyFilters()" class="flex-1 py-3 bg-navy-800 text-white font-bold rounded-xl hover:bg-navy-900">
+            Apply Filters
+          </button>
+        </div>
+
+        <!-- Filtered Results Container -->
+        <div id="search-filter-results" class="pt-4 border-t border-slate-100 divide-y divide-slate-100">
+          <!-- Rendered in App.js -->
+        </div>
+      </div>
+    </section>
+
+    <!-- PAGE 14: SETTINGS / ROLE MANAGEMENT -->
+    <section id="page-14" class="page-view hidden max-w-2xl mx-auto space-y-6">
+      <div class="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-md space-y-6">
+        <h2 class="text-2xl font-extrabold text-navy-800">Settings</h2>
+
+        <!-- Tabs -->
+        <div class="border-b border-slate-200 flex space-x-4 text-sm font-bold text-slate-500">
+          <button onclick="LMCC_App.switchSettingsTab('profile')" class="settings-tab-btn pb-2 text-sky-600 border-b-2 border-sky-600">Profile</button>
+          <button onclick="LMCC_App.switchSettingsTab('roles')" class="settings-tab-btn pb-2 hover:text-slate-700">Role & Permissions</button>
+          <button onclick="LMCC_App.switchSettingsTab('notifications')" class="settings-tab-btn pb-2 hover:text-slate-700">Notifications</button>
+        </div>
+
+        <!-- Profile Section -->
+        <div id="settings-tab-profile" class="space-y-4">
+          <div>
+            <label for="settings-name" class="block text-xs font-bold text-slate-500 uppercase mb-1">Full Name</label>
+            <input type="text" id="settings-name" value="Inspector Sharma" class="w-full px-4 py-3 rounded-xl border border-slate-300 text-sm">
+          </div>
+          <div>
+            <label for="settings-email" class="block text-xs font-bold text-slate-500 uppercase mb-1">Email Address</label>
+            <input type="email" id="settings-email" value="inspector.sharma@lmcc.gov.in" class="w-full px-4 py-3 rounded-xl border border-slate-300 text-sm">
+          </div>
+          <div>
+            <label for="settings-role-display" class="block text-xs font-bold text-slate-500 uppercase mb-1">Role</label>
+            <input type="text" id="settings-role-display" disabled value="Inspector" class="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-100 text-sm text-slate-500 font-bold">
+          </div>
+          <button onclick="LMCC_App.saveProfileSettings()" class="py-3 px-6 bg-navy-800 text-white font-bold rounded-xl shadow hover:bg-navy-900">
+            Save Profile
+          </button>
+        </div>
+
+        <!-- Role & Permissions Matrix -->
+        <div id="settings-tab-roles" class="hidden space-y-4 text-xs">
+          <div class="p-4 bg-sky-50 border border-sky-200 text-sky-900 rounded-2xl">
+            <strong>Role Control:</strong> ORDINARY USERS CANNOT SELF-ASSIGN ADMINISTRATOR PRIVILEGES.
+          </div>
+
+          <div class="space-y-3">
+            <div class="p-4 bg-slate-50 rounded-2xl border border-slate-200">
+              <div class="font-bold text-sm text-navy-800">Inspector</div>
+              <ul class="list-disc pl-5 mt-1 space-y-1 text-slate-600">
+                <li>Scan products & upload packaging images</li>
+                <li>View own scan results & declarations</li>
+                <li>Generate compliance reports</li>
+              </ul>
+            </div>
+
+            <div class="p-4 bg-slate-50 rounded-2xl border border-slate-200">
+              <div class="font-bold text-sm text-navy-800">Enforcement Officer</div>
+              <ul class="list-disc pl-5 mt-1 space-y-1 text-slate-600">
+                <li>View zone inspections & violation trends</li>
+                <li>Access Enforcement Dashboard</li>
+                <li>Download evidence documentation</li>
+              </ul>
+            </div>
+
+            <div class="p-4 bg-slate-50 rounded-2xl border border-slate-200">
+              <div class="font-bold text-sm text-navy-800">Administrator</div>
+              <ul class="list-disc pl-5 mt-1 space-y-1 text-slate-600">
+                <li>User management & role assignments</li>
+                <li>System rule engine configuration</li>
+                <li>Database backup & audit logs</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <!-- Logout Action -->
+        <div class="pt-6 border-t border-slate-200">
+          <button onclick="LMCC_App.logout()" class="w-full py-3.5 bg-red-600 text-white font-bold rounded-xl shadow hover:bg-red-700">
+            Logout
+          </button>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <!-- =========================================================
+       MODALS: OTP LOGIN / SIGN UP / FORGOT PASSWORD
+       ========================================================= -->
+  <!-- OTP Modal -->
+  <div id="modal-otp" class="fixed inset-0 bg-slate-900/60 z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl p-6 sm:p-8 max-w-sm w-full space-y-4">
+      <h3 class="text-xl font-bold text-navy-800">Login with OTP</h3>
+      <p class="text-xs text-slate-500">Enter your 10-digit registered mobile number.</p>
+      <input type="tel" id="otp-mobile-input" placeholder="+91 98765 43210" class="w-full px-4 py-3 rounded-xl border border-slate-300 text-sm">
+      <div id="otp-code-container" class="hidden">
+        <label for="otp-code-input" class="block text-xs font-bold text-slate-500 uppercase mb-1">Enter 6-digit OTP</label>
+        <input type="text" id="otp-code-input" value="123456" class="w-full px-4 py-3 rounded-xl border border-slate-300 text-sm tracking-widest text-center font-bold">
+      </div>
+      <button id="btn-otp-action" onclick="LMCC_App.handleOTPFlow()" class="w-full py-3 bg-navy-800 text-white font-bold rounded-xl">Send OTP</button>
+      <button onclick="LMCC_App.closeModals()" class="w-full py-2 text-xs font-bold text-slate-500">Cancel</button>
+    </div>
+  </div>
+
+  <!-- Sign Up Registration Modal -->
+  <div id="modal-signup" class="fixed inset-0 bg-slate-900/60 z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl p-6 sm:p-8 max-w-md w-full space-y-4 max-h-[90vh] overflow-y-auto">
+      <h3 class="text-xl font-bold text-navy-800">Create Inspector Account</h3>
+      <form onsubmit="LMCC_App.handleRegistration(event)" class="space-y-3">
+        <div>
+          <label for="signup-fullname" class="block text-xs font-bold text-slate-600">Full Name</label>
+          <input type="text" id="signup-fullname" required class="w-full px-3 py-2 rounded-xl border border-slate-300 text-sm">
+        </div>
+        <div>
+          <label for="signup-email" class="block text-xs font-bold text-slate-600">Email Address</label>
+          <input type="email" id="signup-email" required class="w-full px-3 py-2 rounded-xl border border-slate-300 text-sm">
+        </div>
+        <div>
+          <label for="signup-mobile" class="block text-xs font-bold text-slate-600">Mobile Number</label>
+          <input type="tel" id="signup-mobile" required class="w-full px-3 py-2 rounded-xl border border-slate-300 text-sm">
+        </div>
+        <div>
+          <label for="signup-password" class="block text-xs font-bold text-slate-600">Password</label>
+          <input type="password" id="signup-password" required class="w-full px-3 py-2 rounded-xl border border-slate-300 text-sm">
+        </div>
+        <div>
+          <label for="signup-role" class="block text-xs font-bold text-slate-600">Role</label>
+          <input type="text" id="signup-role" value="Inspector" disabled class="w-full px-3 py-2 rounded-xl border border-slate-200 bg-slate-100 text-sm text-slate-500 font-bold">
+        </div>
+        <button type="submit" class="w-full py-3 bg-navy-800 text-white font-bold rounded-xl">Register Account</button>
+      </form>
+      <button onclick="LMCC_App.closeModals()" class="w-full py-2 text-xs font-bold text-slate-500">Cancel</button>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <!-- METRIYA App JS: works both from FastAPI and when this HTML is opened directly -->
+  <script src="/app_METRIYA.js"></script>
+  <script>
+    /*
+     * ============================================================
+     * FINAL NAVIGATION SAFETY PATCH
+     * Keeps page navigation working even if app.js navigation
+     * logic changes. All 14 pages are controlled from here.
+     * ============================================================
+     */
+    (function () {
+      const PAGE_IDS = [
+        "page-1", "page-2", "page-3", "page-4",
+        "page-5", "page-6", "page-7", "page-8",
+        "page-9", "page-10", "page-11", "page-12",
+        "page-13", "page-14"
+      ];
+
+      let currentPage = "page-1";
+      const historyStack = [];
+
+      function showPage(pageId, addHistory = true) {
+        const target = document.getElementById(pageId);
+
+        if (!target) {
+          console.warn("LMCC: Page not found:", pageId);
+          return false;
+        }
+
+        const previous = currentPage;
+
+        PAGE_IDS.forEach(function (id) {
+          const page = document.getElementById(id);
+          if (page) {
+            page.classList.toggle("hidden", id !== pageId);
+          }
+        });
+
+        currentPage = pageId;
+
+        const header = document.getElementById("main-header");
+        if (header) {
+          header.classList.toggle(
+            "hidden",
+            pageId === "page-1" || pageId === "page-2"
+          );
+        }
+
+        if (
+          addHistory &&
+          previous &&
+          previous !== pageId
+        ) {
+          historyStack.push(previous);
+        }
+
+        window.scrollTo({
+          top: 0,
+          behavior: "instant"
+        });
+
+        try {
+          if (window.lucide) {
+            window.lucide.createIcons();
+          }
+        } catch (e) {
+          console.warn("LMCC: Icon refresh failed:", e);
+        }
+
+        return true;
+      }
+
+      window.safeNavigate = function (pageId) {
+        return showPage(pageId, true);
+      };
+
+      window.safeGoBack = function () {
+        if (historyStack.length > 0) {
+          const previous = historyStack.pop();
+          return showPage(previous, false);
+        }
+
+        return showPage("page-3", false);
+      };
+
+      /*
+       * Replace the navigation method used by the HTML buttons.
+       */
+      window.LMCC_App = window.LMCC_App || {};
+      window.LMCC_App.navigateTo = window.safeNavigate;
+      window.LMCC_App.goBack = window.safeGoBack;
+
+      /*
+       * Back button.
+       */
+      const backButton =
+        document.getElementById("btn-global-back");
+
+      if (backButton) {
+        backButton.addEventListener("click", function () {
+          window.safeGoBack();
+        });
+      }
+
+      /*
+       * Drawer controls.
+       */
+      const drawer =
+        document.getElementById("nav-drawer");
+
+      const backdrop =
+        document.getElementById("drawer-backdrop");
+
+      const openDrawerButton =
+        document.getElementById("btn-toggle-drawer");
+
+      const closeDrawerButton =
+        document.getElementById("btn-close-drawer");
+
+      function openDrawer() {
+        if (!drawer) return;
+
+        drawer.classList.remove("-translate-x-full");
+
+        if (backdrop) {
+          backdrop.classList.remove("hidden");
+
+          requestAnimationFrame(function () {
+            backdrop.classList.remove("opacity-0");
+          });
+        }
+      }
+
+      function closeDrawer() {
+        if (drawer) {
+          drawer.classList.add("-translate-x-full");
+        }
+
+        if (backdrop) {
+          backdrop.classList.add("opacity-0");
+
+          setTimeout(function () {
+            backdrop.classList.add("hidden");
+          }, 200);
+        }
+      }
+
+      if (openDrawerButton) {
+        openDrawerButton.addEventListener(
+          "click",
+          openDrawer
+        );
+      }
+
+      if (closeDrawerButton) {
+        closeDrawerButton.addEventListener(
+          "click",
+          closeDrawer
+        );
+      }
+
+      if (backdrop) {
+        backdrop.addEventListener(
+          "click",
+          closeDrawer
+        );
+      }
+
+      /*
+       * Close the mobile drawer after selecting a page.
+       */
+      document.addEventListener("click", function (event) {
+        const link =
+          event.target.closest(
+            "#nav-drawer a"
+          );
+
+        if (link) {
+          closeDrawer();
+        }
+      });
+
+      /*
+       * Make sure the correct initial page is visible.
+       */
+      document.addEventListener(
+        "DOMContentLoaded",
+        function () {
+          showPage(
+            document
+              .querySelector(
+                ".page-view:not(.hidden)"
+              )?.id || "page-1",
+            false
+          );
+        }
+      );
+    })();
+  </script>
+
+</body>
+</html>
